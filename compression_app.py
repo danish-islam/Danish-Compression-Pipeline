@@ -14,7 +14,7 @@ class VideoHDF5App(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle('Video HDF5 Creator')
+        self.setWindowTitle('TIFF Folder to HDF5 Video Converter')
         self.resize(900, 300)
 
         # Create widgets
@@ -43,6 +43,24 @@ class VideoHDF5App(QWidget):
         layout.addWidget(self.progress_label)
 
         self.setLayout(layout)
+        style = """
+                QWidget{
+                    background: #262D37;
+                }
+                QLabel{
+                    color: #fff;
+                }
+                QPushButton{
+                    color: white;
+                    background: #0577a8;
+                    border: 1px #DADADA solid;
+                    padding: 5px 10px;
+                    border-radius: 10px;
+                    font-size: 9pt;
+                    outline: none;
+                }
+                """
+        self.setStyleSheet(style)
 
     def select_folder(self):
         folder_path = QFileDialog.getExistingDirectory(self, 'Select Folder', os.path.expanduser('~'))
