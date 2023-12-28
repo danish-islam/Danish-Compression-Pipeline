@@ -5,6 +5,7 @@ import h5py
 import time
 import shutil 
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QFileDialog, QLabel, QSlider, QHBoxLayout
+import math
 
 class VideoHDF5App(QWidget):
     def __init__(self):
@@ -14,6 +15,7 @@ class VideoHDF5App(QWidget):
 
     def init_ui(self):
         self.setWindowTitle('Video HDF5 Creator')
+        self.resize(900, 300)
 
         # Create widgets
         self.folder_button = QPushButton('Select Folder')
@@ -24,7 +26,7 @@ class VideoHDF5App(QWidget):
         self.compression_slider.setMaximum(9)  # Set maximum value
         self.compression_display = QLabel('Compression Factor: 1')
         self.run_button = QPushButton('Run Function')
-        self.progress_label = QLabel('Progress:')
+        self.progress_label = QLabel('Progress:  Time left:')
 
         # Connect button clicks to functions
         self.folder_button.clicked.connect(self.select_folder)
@@ -83,23 +85,29 @@ class VideoHDF5App(QWidget):
             # Loop through all files in folder
             ls = os.listdir(tif_folder)
             for filename in ls:
-                s = time.time()
+                
+                if(filename.endswith(('.tif', '.tiff')) == False):
+                    count = count + 1
+                    continue
 
+                s = time.time()
                 file_path = os.path.join(tif_folder, filename)
                 tif_array = tifffile.imread(file_path)
                 current_size = video_dataset.shape[0]
                 video_dataset.resize(current_size + 1, axis=0)
                 video_dataset[current_size, :, :] = tif_array
+                e = time.time()
+                time_elapsed = e-s
+                print("Time taken: " + str(time_elapsed))
+
+                approx_time_left = time_elapsed*(num_files-count)
 
                 # Update progress in the GUI
-                self.progress_label.setText("Progress: " + str(count) + "\\" + str(num_files))
+                self.progress_label.setText("Progress: " + str(count) + "\\" + str(num_files) + " Time left: <" + str(math.ceil(approx_time_left/60)) + " minute(s)")
                 count = count + 1
                 QApplication.processEvents()  # Ensure GUI updates
 
-                e = time.time()
-                print("Time taken: " + str(e - s))
-
-            self.progress_label.setText("Progress: " + str(count) + "\\" + str(num_files))
+            self.progress_label.setText("Progress: " + str(count) + "\\" + str(num_files) + " Time left: Done!")
 
 if __name__ == '__main__':
     app = QApplication([])
