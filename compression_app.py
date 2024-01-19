@@ -98,7 +98,7 @@ class VideoHDF5App(QWidget):
         os.makedirs(output_directory)
 
         with h5py.File(hdf5_file_path, 'a') as hdf5_file:
-            video_dataset = hdf5_file.require_dataset('video_frames',shape=(0,2048,2048),maxshape=(None,2048,2048), compression="gzip", compression_opts=compression_value,chunks=True,dtype='i1')
+            video_dataset = hdf5_file.require_dataset('video_frames',shape=(0,2048,2048),maxshape=(None,2048,2048), compression="gzip", compression_opts=compression_value,chunks=True,dtype='uint8')
 
             # Loop through all files in folder
             ls = os.listdir(tif_folder)
